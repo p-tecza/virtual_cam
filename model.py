@@ -8,9 +8,9 @@ class Cube:
         self.cuboid_reader = CuboidReader()
         self.app = app
         self.ctx = app.ctx
-        self.vbo = self.get_vbo()
+        self.vbo = None#self.get_vbo([])
         self.shader_program = self.get_shader_program('default')
-        self.vao = self.get_vao()
+        self.vao = None#self.get_vao()
         self.m_model = self.get_model_matrix()
         self.on_init()
 
@@ -30,7 +30,15 @@ class Cube:
 
     def render(self):
         self.update()
-        self.vao.render(mgl.LINES)
+
+        cuboids = self.cuboid_reader.get_vertices()
+
+        for vertices in cuboids:
+            self.vbo = self.get_vbo(vertices)
+            self.vao = self.get_vao()
+            self.vao.render(mgl.LINES)
+
+        
 
     def destroy(self):
         self.vbo.release()
@@ -41,23 +49,19 @@ class Cube:
         vao = self.ctx.vertex_array(self.shader_program, [(self.vbo, '3f', 'in_position')])
         return vao
     
-    def get_vertex_data(self):
+    def get_vertex_data(self, vertices):
         # vertices = [(-1,-1,1), (1,-1,1),(1,1,1),(-1,1,1),(-1,1,-1),(-1,-1,-1),(1,-1,-1),(1,1,-1)]
         indices = [(0,1), (1,2), (2,3),(3,0),(0,5),(5,6),(6,1),(5,4),(6,7),(4,7),(7,2),(4,3)]
-        cuboids = self.cuboid_reader.get_vertices()
-
-        for vertices in cuboids:
-            vertex_data=self.get_data(vertices, indices)
-            print(vertex_data)
-        return vertex_data
+        
+        return self.get_data(vertices, indices)
     
     @staticmethod
     def get_data(vertices, indices):
         data = [vertices[ind] for line in indices for ind in line]
         return np.array(data,dtype='f4')
 
-    def get_vbo(self):
-        vertex_data = self.get_vertex_data()
+    def get_vbo(self, vertices):
+        vertex_data = self.get_vertex_data(vertices)
         vbo = self.ctx.buffer(vertex_data)
         return vbo
     
