@@ -18,8 +18,9 @@ class Camera:
         self.aspect_ratio = app.WIN_SIZE[0]/app.WIN_SIZE[1]
         self.position=glm.vec3(position)
         self.up = glm.vec3(0,1,0)
-        self.right= glm.vec3(1,0,0)
+        self.right= glm.vec3(-1,0,0)
         # forward to -1 bo układ prawoskrętny
+        # self.forward = glm.vec3(0,0,-1)
         self.forward = glm.vec3(0,0,-1)
         self.m_translation = glm.mat4(1.0)
         self.m_rotation = glm.mat4(1.0)
@@ -67,7 +68,7 @@ class Camera:
         
         self.up = glm.normalize(glm.cross(self.right, self.forward))
 
-        self.forward = glm.normalize(self.forward)
+        self.forward = glm.normalize(-self.forward)
 
 
     def update(self):
@@ -83,25 +84,47 @@ class Camera:
         velocity = SPEED * self.app.delta_time
         keys = pg.key.get_pressed()
         if keys[pg.K_w]:
-            self.position.y -= self.translation_unit
-            self.m_translation *= self.update_view_matrix_translate(glm.vec4(0,-self.translation_unit,0,1))
+            # self.position.y -= self.translation_unit
+            translation_vector = glm.vec4(-self.translation_unit * self.up.x,-self.translation_unit * self.up.y,-self.translation_unit * self.up.z,1)
+            self.position += glm.vec3(translation_vector)
+            self.m_translation *= self.update_view_matrix_translate(translation_vector)
         if keys[pg.K_s]:
-            self.position.y += self.translation_unit
-            self.m_translation *= self.update_view_matrix_translate(glm.vec4(0,self.translation_unit,0,1))
+            # self.position.y += self.translation_unit
+            translation_vector = glm.vec4(self.translation_unit * self.up.x,self.translation_unit * self.up.y,self.translation_unit * self.up.z,1)
+            self.position += glm.vec3(translation_vector)
+            self.m_translation *= self.update_view_matrix_translate(translation_vector)
+            # self.m_translation *= self.update_view_matrix_translate(glm.vec4(0,self.translation_unit,0,1))
         if keys[pg.K_a]:
-            self.position.x += self.translation_unit
-            self.m_translation *= self.update_view_matrix_translate(glm.vec4(self.translation_unit,0,0,1))
+            # self.position.x += self.translation_unit
+            # translation_vector = glm.vec4(self.translation_unit * self.right.x,self.translation_unit * self.right.y,self.translation_unit * self.right.z,1)
+            translation_vector = glm.vec4(-self.translation_unit * self.right.x,-self.translation_unit * self.right.y,-self.translation_unit * self.right.z,1)
+            self.position += glm.vec3(translation_vector)
+            self.m_translation *= self.update_view_matrix_translate(translation_vector)
+            # self.m_translation *= self.update_view_matrix_translate(glm.vec4(self.translation_unit,0,0,1))
         if keys[pg.K_d]:
-            self.position.x -= self.translation_unit
-            self.m_translation *= self.update_view_matrix_translate(glm.vec4(-self.translation_unit,0,0,1))
+            # self.position.x -= self.translation_unit
+            translation_vector = glm.vec4(self.translation_unit * self.right.x,self.translation_unit * self.right.y,self.translation_unit * self.right.z,1)
+
+            # translation_vector = glm.vec4(-self.translation_unit * self.right.x,-self.translation_unit * self.right.y,-self.translation_unit * self.right.z,1)
+            self.position += glm.vec3(translation_vector)
+            # self.m_translation *= self.update_view_matrix_translate(glm.vec4(-self.translation_unit,0,0,1))
+            self.m_translation *= self.update_view_matrix_translate(translation_vector)
         if keys[pg.K_q]:
-            self.position.z += self.translation_unit
-            self.m_translation *= self.update_view_matrix_translate(glm.vec4(0,0,self.translation_unit,1))
-            #self.m_translation *= self.update_view_matrix_translate(glm.vec4(self.translation_unit * self.forward.x,self.translation_unit*self.forward.y,self.translation_unit*self.forward.z,1))
+            # self.position.z += self.translation_unit
+            # translation_vector = glm.vec4(self.translation_unit * self.forward.x,self.translation_unit*self.forward.y,self.translation_unit*self.forward.z,1)
+            translation_vector = glm.vec4(-self.translation_unit * self.forward.x,-self.translation_unit * self.forward.y,-self.translation_unit * self.forward.z,1)
+
+            self.position += glm.vec3(translation_vector)
+            # self.m_translation *= self.update_view_matrix_translate(glm.vec4(0,0,self.translation_unit,1))
+            self.m_translation *= self.update_view_matrix_translate(translation_vector)
         if keys[pg.K_e]:
-            self.position.z -= self.translation_unit
-            self.m_translation *= self.update_view_matrix_translate(glm.vec4(0,0,-self.translation_unit,1))
-            #self.m_translation *= self.update_view_matrix_translate(glm.vec4(self.translation_unit * self.forward.x,self.translation_unit * self.forward.y,-self.translation_unit * self.forward.z,1))*glm.vec4(self.forward,1)
+            # self.position.z -= self.translation_unit
+            # translation_vector = glm.vec4(-self.translation_unit * self.forward.x,-self.translation_unit * self.forward.y,-self.translation_unit * self.forward.z,1)
+            translation_vector = glm.vec4(self.translation_unit * self.forward.x,self.translation_unit*self.forward.y,self.translation_unit*self.forward.z,1)
+
+            self.position += glm.vec3(translation_vector)
+            # self.m_translation *= self.update_view_matrix_translate(glm.vec4(0,0,-self.translation_unit,1))
+            self.m_translation *= self.update_view_matrix_translate(translation_vector)
         global FOV, MIN_FOV, MAX_FOV
         if keys[pg.K_n]:
             if FOV<MAX_FOV:
