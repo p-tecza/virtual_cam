@@ -80,9 +80,9 @@ class Camera:
         if keys[pg.K_m]:
             if FOV>MIN_FOV:
                 FOV-=1
-        if keys[pg.K_r]:
-            self.m_rotation = self.update_view_matrix_rotate(glm.vec3(0,self.ang_unit,0))
         if keys[pg.K_t]:
+            self.m_rotation = self.update_view_matrix_rotate(glm.vec3(0,self.ang_unit,0))
+        if keys[pg.K_r]:
             self.m_rotation = self.update_view_matrix_rotate(glm.vec3(0,-self.ang_unit,0))
         if keys[pg.K_f]:
             self.m_rotation = self.update_view_matrix_rotate(glm.vec3(self.ang_unit,0,0))
