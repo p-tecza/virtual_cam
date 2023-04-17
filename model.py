@@ -19,9 +19,8 @@ class Cube:
         return m_model
 
     def update(self):
-        # m_model = glm.rotate(self.m_model, self.app.time, glm.vec3(0,1,0))
-        # self.shader_program['m_model'].write(m_model)
         self.shader_program['m_view'].write(self.app.camera.m_view)
+        self.shader_program['m_proj'].write(self.app.camera.m_proj)
 
     def on_init(self):
         self.shader_program['m_proj'].write(self.app.camera.m_proj)
@@ -50,7 +49,6 @@ class Cube:
         return vao
     
     def get_vertex_data(self, vertices):
-        # vertices = [(-1,-1,1), (1,-1,1),(1,1,1),(-1,1,1),(-1,1,-1),(-1,-1,-1),(1,-1,-1),(1,1,-1)]
         indices = [(0,1), (1,2), (2,3),(3,0),(0,5),(5,6),(6,1),(5,4),(6,7),(4,7),(7,2),(4,3)]
         
         return self.get_data(vertices, indices)
